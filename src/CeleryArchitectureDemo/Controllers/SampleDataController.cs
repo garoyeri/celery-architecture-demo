@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
-namespace celery_architecture_demo.Controllers
+namespace CeleryArchitectureDemo.Controllers
 {
     [Route("api/[controller]")]
     public class SampleDataController : Controller
