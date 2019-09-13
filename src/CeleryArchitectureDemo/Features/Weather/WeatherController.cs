@@ -4,10 +4,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
-namespace CeleryArchitectureDemo.Controllers
+namespace CeleryArchitectureDemo.Features.Weather
 {
     [Route("api/[controller]")]
-    public class SampleDataController : Controller
+    public class WeatherController : Controller
     {
         private static string[] Summaries = new[]
         {
@@ -15,7 +15,7 @@ namespace CeleryArchitectureDemo.Controllers
         };
 
         [HttpGet("[action]")]
-        public IEnumerable<WeatherForecast> WeatherForecasts()
+        public IEnumerable<WeatherForecast> Forecasts()
         {
             var rng = new Random();
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
