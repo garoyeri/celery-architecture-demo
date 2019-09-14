@@ -20,3 +20,5 @@ dotnet run
 ```
 
 Navigate to: https://localhost:5001 to see the site (ignore SSL / HTTPS issues, it's a self-signed certificate).
+
+Navigate to: https://localhost:5001/swagger to access the API page (in case you don't have Postman).
