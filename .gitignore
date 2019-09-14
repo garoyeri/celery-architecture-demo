@@ -230,3 +230,8 @@ _Pvt_Extensions
 
 # FAKE - F# Make
 .fake/
+
+# Custom Ignores
+
+# Database files
+*.sqlite
