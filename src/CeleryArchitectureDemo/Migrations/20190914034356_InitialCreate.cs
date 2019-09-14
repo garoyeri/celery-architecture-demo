@@ -14,7 +14,7 @@ namespace CeleryArchitectureDemo.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Description = table.Column<string>(nullable: true),
-                    WhenCompleted = table.Column<DateTimeOffset>(nullable: false),
+                    WhenCompleted = table.Column<DateTimeOffset>(nullable: true),
                     IsCompleted = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>

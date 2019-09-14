@@ -27,7 +27,7 @@ namespace CeleryArchitectureDemo.Migrations
 
                     b.Property<bool>("IsCompleted");
 
-                    b.Property<DateTimeOffset>("WhenCompleted");
+                    b.Property<DateTimeOffset?>("WhenCompleted");
 
                     b.HasKey("Id");
 
