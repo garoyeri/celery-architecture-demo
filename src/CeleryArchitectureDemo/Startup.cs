@@ -31,7 +31,11 @@ namespace CeleryArchitectureDemo
             services.AddDbContext<TodoContext>
                     (options => options.UseSqlite(connection));
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddMvc(options =>
+            {
+                options.Filters.Add<TodoContextTransactionFilter>();
+            })
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
