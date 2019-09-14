@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CeleryArchitectureDemo.Features.Weather
@@ -9,36 +10,17 @@ namespace CeleryArchitectureDemo.Features.Weather
     [Route("api/[controller]")]
     public class WeatherController : Controller
     {
-        private static string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
+        private readonly IMediator _mediator;
 
-        [HttpGet("[action]")]
-        public IEnumerable<WeatherForecast> Forecasts()
+        public WeatherController(IMediator mediator)
         {
-            var rng = new Random();
-            return Enumerable.Range(1, 5).Select(index => new WeatherForecast
-            {
-                DateFormatted = DateTime.Now.AddDays(index).ToString("d"),
-                TemperatureC = rng.Next(-20, 55),
-                Summary = Summaries[rng.Next(Summaries.Length)]
-            });
+            _mediator = mediator;
         }
 
-        public class WeatherForecast
+        [HttpGet("[action]")]
+        public async Task<ActionResult<IEnumerable<WeatherForecast>>> Forecasts()
         {
-            public string DateFormatted { get; set; }
-            public int TemperatureC { get; set; }
-            public string Summary { get; set; }
-
-            public int TemperatureF
-            {
-                get
-                {
-                    return 32 + (int)(TemperatureC / 0.5556);
-                }
-            }
+            return Ok((await _mediator.Send(new GetForecasts.Query())).Forecast);
         }
     }
 }
