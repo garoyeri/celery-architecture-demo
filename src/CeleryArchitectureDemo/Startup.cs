@@ -42,6 +42,8 @@ namespace CeleryArchitectureDemo
             {
                 configuration.RootPath = "ClientApp/build";
             });
+
+            services.AddOpenApiDocument();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -68,6 +70,9 @@ namespace CeleryArchitectureDemo
                     name: "default",
                     template: "{controller}/{action=Index}/{id?}");
             });
+
+            app.UseSwaggerUi3();
+            app.UseOpenApi();
 
             app.UseSpa(spa =>
             {
