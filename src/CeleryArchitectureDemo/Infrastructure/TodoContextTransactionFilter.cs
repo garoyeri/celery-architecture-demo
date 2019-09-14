@@ -21,7 +21,7 @@ namespace CeleryArchitectureDemo.Infrastructure
 
                 await next();
 
-                await _database.SaveChangesAsync();
+                await _database.CommitTransactionAsync();
             }
             catch (Exception)
             {
