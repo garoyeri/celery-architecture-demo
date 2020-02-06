@@ -2,8 +2,14 @@
 
 You'll need the following things:
 
-* .NET Core SDK 2.2+ https://dotnet.microsoft.com/download/dotnet-core/2.2
+* .NET Core SDK 3.1+ https://dotnet.microsoft.com/download/dotnet-core/3.1
 * Visual Studio Code (optional) https://code.visualstudio.com
+
+Configure the necessary tools (the EF Core tools no longer ship with .NET Core):
+
+```bash
+dotnet tool restore
+```
 
 To get the database configured and running
 
