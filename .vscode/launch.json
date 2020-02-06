@@ -10,7 +10,7 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/src/CeleryArchitectureDemo/bin/Debug/netcoreapp2.2/CeleryArchitectureDemo.dll",
+            "program": "${workspaceFolder}/src/CeleryArchitectureDemo/bin/Debug/netcoreapp3.1/CeleryArchitectureDemo.dll",
             "args": [],
             "cwd": "${workspaceFolder}/src/CeleryArchitectureDemo",
             "stopAtEntry": false,
