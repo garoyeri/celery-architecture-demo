@@ -12,8 +12,9 @@
         public async Task ShouldCreateTodoItem()
         {
             var response = await Send(new AddItem.Command() {Description = "First Item [ShouldCreateTodoItem]"});
-            
-            (await Query<TodoItem>().SingleAsync(i => i.Id == response.Id)).Description.ShouldBe("First Item [ShouldCreateTodoItem]");
+
+            (await Query<TodoItem>().SingleAsync(i => i.Id == response.Id)).Description.ShouldBe(
+                "First Item [ShouldCreateTodoItem]");
         }
     }
 }

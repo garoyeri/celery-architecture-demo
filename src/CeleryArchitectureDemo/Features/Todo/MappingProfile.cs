@@ -1,8 +1,7 @@
-using System;
-using AutoMapper;
-
 namespace CeleryArchitectureDemo.Features.Todo
 {
+    using AutoMapper;
+
     public class MappingProfile : Profile
     {
         public MappingProfile()

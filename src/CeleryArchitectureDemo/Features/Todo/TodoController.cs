@@ -1,9 +1,9 @@
-using System.Threading.Tasks;
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
-
 namespace CeleryArchitectureDemo.Features.Todo
 {
+    using System.Threading.Tasks;
+    using MediatR;
+    using Microsoft.AspNetCore.Mvc;
+
     [Route("api/[controller]")]
     [ApiController]
     public class TodoController : ControllerBase
@@ -43,7 +43,7 @@ namespace CeleryArchitectureDemo.Features.Todo
         [HttpPost("{id}/complete")]
         public async Task<ActionResult<TodoItem>> Complete([FromRoute] int id)
         {
-            var command = new CompleteItem.Command { Id = id };
+            var command = new CompleteItem.Command {Id = id};
             var result = await _mediator.Send(command);
 
             return Ok(result);

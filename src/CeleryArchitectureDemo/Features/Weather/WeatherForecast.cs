@@ -8,10 +8,7 @@ namespace CeleryArchitectureDemo.Features.Weather
 
         public int TemperatureF
         {
-            get
-            {
-                return 32 + (int)(TemperatureC / 0.5556);
-            }
+            get { return 32 + (int) (TemperatureC / 0.5556); }
         }
     }
 }

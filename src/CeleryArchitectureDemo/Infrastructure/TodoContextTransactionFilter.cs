@@ -1,9 +1,9 @@
-using System;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc.Filters;
-
 namespace CeleryArchitectureDemo.Infrastructure
 {
+    using System;
+    using System.Threading.Tasks;
+    using Microsoft.AspNetCore.Mvc.Filters;
+
     public class TodoContextTransactionFilter : IAsyncActionFilter
     {
         private readonly TodoContext _database;

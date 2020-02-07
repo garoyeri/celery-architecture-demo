@@ -1,7 +1,7 @@
-using System;
-
 namespace CeleryArchitectureDemo.Features.Todo
 {
+    using System;
+
     public class TodoItem
     {
         public int Id { get; set; }

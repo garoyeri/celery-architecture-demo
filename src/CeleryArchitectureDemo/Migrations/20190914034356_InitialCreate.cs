@@ -1,8 +1,8 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
-
-namespace CeleryArchitectureDemo.Migrations
+﻿namespace CeleryArchitectureDemo.Migrations
 {
+    using System;
+    using Microsoft.EntityFrameworkCore.Migrations;
+
     public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -17,10 +17,7 @@ namespace CeleryArchitectureDemo.Migrations
                     WhenCompleted = table.Column<DateTimeOffset>(nullable: true),
                     IsCompleted = table.Column<bool>(nullable: false)
                 },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TodoItems", x => x.Id);
-                });
+                constraints: table => { table.PrimaryKey("PK_TodoItems", x => x.Id); });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

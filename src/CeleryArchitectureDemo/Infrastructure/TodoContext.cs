@@ -1,15 +1,15 @@
-using System;
-using System.Data;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using CeleryArchitectureDemo.Domain;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-
 namespace CeleryArchitectureDemo.Infrastructure
 {
+    using System;
+    using System.Data;
+    using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Domain;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.EntityFrameworkCore.Storage;
+    using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+
     public class TodoContext : DbContext
     {
         private IDbContextTransaction _currentTransaction;
@@ -66,7 +66,7 @@ namespace CeleryArchitectureDemo.Infrastructure
                 }
             }
         }
-        
+
         public DbSet<TodoItem> TodoItems { get; set; }
 
         /// <inheritdoc />
@@ -88,8 +88,9 @@ namespace CeleryArchitectureDemo.Infrastructure
                 // This only supports millisecond precision, but should be sufficient for most use cases.
                 foreach (var entityType in builder.Model.GetEntityTypes())
                 {
-                    var properties = entityType.ClrType.GetProperties().Where(p => p.PropertyType == typeof(DateTimeOffset)
-                                                                                || p.PropertyType == typeof(DateTimeOffset?));
+                    var properties = entityType.ClrType.GetProperties().Where(p =>
+                        p.PropertyType == typeof(DateTimeOffset)
+                        || p.PropertyType == typeof(DateTimeOffset?));
                     foreach (var property in properties)
                     {
                         builder

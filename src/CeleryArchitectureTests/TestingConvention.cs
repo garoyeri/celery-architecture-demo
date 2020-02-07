@@ -7,7 +7,6 @@
 
     public class TestingConvention : Execution, IDisposable
     {
-
         public TestingConvention()
         {
             Migrate<TodoContext>();
@@ -17,10 +16,7 @@
         {
             var instance = testClass.Construct();
 
-            testClass.RunCases(@case =>
-            {
-                @case.Execute(instance);
-            });
+            testClass.RunCases(@case => { @case.Execute(instance); });
 
             instance.Dispose();
         }

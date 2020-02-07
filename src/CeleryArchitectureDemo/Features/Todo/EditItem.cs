@@ -1,11 +1,11 @@
-using System.Threading;
-using System.Threading.Tasks;
-using AutoMapper;
-using CeleryArchitectureDemo.Infrastructure;
-using MediatR;
-
 namespace CeleryArchitectureDemo.Features.Todo
 {
+    using System.Threading;
+    using System.Threading.Tasks;
+    using AutoMapper;
+    using Infrastructure;
+    using MediatR;
+
     public static class EditItem
     {
         public class Command : IRequest<TodoItem>
@@ -27,7 +27,7 @@ namespace CeleryArchitectureDemo.Features.Todo
 
             public async Task<TodoItem> Handle(Command request, CancellationToken cancellationToken)
             {
-                var item = await _context.TodoItems.FindAsync(new object[] { request.Id }, cancellationToken);
+                var item = await _context.TodoItems.FindAsync(new object[] {request.Id}, cancellationToken);
                 if (item == null)
                     throw new TodoItemNotFoundException();
 
