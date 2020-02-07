@@ -24,28 +24,51 @@ export class Todo extends Component {
 
     static renderComponents(todoItems, self) {
         return (
-            <>
-                <TodoList todoItems={todoItems} onRequireReload={self.reload}></TodoList>
-                <AddItem onRequireReload={self.reload}></AddItem>
-            </>
-        );
-    }
+        <>
+        <
+        TodoList
+        todoItems = { todoItems }
+        onRequireReload = { self.reload }></
+        TodoList >  < AddItem
+        onRequireReload = { self.reload }></
+        AddItem >  < />
+    );
+}
 
-    render() {
-        let contents = this.state.loading ? (
-            <p>
-                <em>Loading...</em>
-            </p>
-        ) : (
-            Todo.renderComponents(this.state.todoItems, this)
-        );
+render()
+{
+    let contents = this.state.loading
+        ? (
+                    <
+        p >
+         <
+        em >
+        Loading...</
+    em >  < /
+    p > 
+) :
+(
+    Todo.renderComponents(this.state.todoItems, this)
+);
 
-        return (
-            <div>
-                <h1>Todo List</h1>
-                <p>Keep track of what you're doing, really simply.</p>
-                {contents}
-            </div>
-        );
-    }
+return (
+    <
+    div >
+    <
+    h1 >
+    Todo
+List < /
+h1 >  < p > Keep
+track
+of
+what
+you
+'re doing, really simply.</p>
+{
+    contents
+}
+</
+div > 
+);
+}
 }
