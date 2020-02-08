@@ -1,20 +1,11 @@
-import React, { useState } from "react";
+import { useState } from "react";
 
-export function Counter() {
-  const [currentCount, setCount] = useState(0);
-  return (
-    <div>
-      <h1>Counter</h1>
-      <p>This is a simple example of a React component.</p>
-      <p aria-live="polite">
-        Current count: <strong>{currentCount}</strong>
-      </p>
-      <button
-        className="btn btn-primary"
-        onClick={() => setCount(currentCount + 1)}
-      >
-        Increment
-      </button>
-    </div>
-  );
+function useCounter() {
+  const [count, setCount] = useState(0);
+  const increment = () => setCount(value => value + 1);
+  return { count: count, increment };
 }
+
+const Counter = ({ children, ...props }) => children(useCounter(props));
+
+export { Counter, useCounter };
