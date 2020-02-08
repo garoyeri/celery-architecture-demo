@@ -1,12 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
-
 namespace CeleryArchitectureDemo.Features.Weather
 {
+    using System.Collections.Generic;
+    using System.Threading.Tasks;
+    using MediatR;
+    using Microsoft.AspNetCore.Mvc;
+
     [Route("api/[controller]")]
     public class WeatherController : Controller
     {

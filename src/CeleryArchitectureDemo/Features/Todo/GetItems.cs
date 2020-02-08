@@ -1,14 +1,14 @@
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using AutoMapper;
-using AutoMapper.QueryableExtensions;
-using CeleryArchitectureDemo.Infrastructure;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
-
 namespace CeleryArchitectureDemo.Features.Todo
 {
+    using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using AutoMapper;
+    using AutoMapper.QueryableExtensions;
+    using Infrastructure;
+    using MediatR;
+    using Microsoft.EntityFrameworkCore;
+
     public static class GetItems
     {
         public class Query : IRequest<TodoItemList>
@@ -28,12 +28,12 @@ namespace CeleryArchitectureDemo.Features.Todo
 
             public async Task<TodoItemList> Handle(Query request, CancellationToken cancellationToken)
             {
-                var results =  await _context.TodoItems
+                var results = await _context.TodoItems
                     .OrderBy(i => i.WhenCompleted)
                     .ProjectTo<TodoItem>(_mapper.ConfigurationProvider)
                     .ToListAsync(cancellationToken);
-                
-                return new TodoItemList { TodoItems = results };
+
+                return new TodoItemList {TodoItems = results};
             }
         }
     }

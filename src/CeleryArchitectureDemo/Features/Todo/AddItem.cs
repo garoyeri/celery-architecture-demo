@@ -1,11 +1,11 @@
-using System.Threading;
-using System.Threading.Tasks;
-using AutoMapper;
-using CeleryArchitectureDemo.Infrastructure;
-using MediatR;
-
 namespace CeleryArchitectureDemo.Features.Todo
 {
+    using System.Threading;
+    using System.Threading.Tasks;
+    using AutoMapper;
+    using Infrastructure;
+    using MediatR;
+
     public static class AddItem
     {
         public class Command : IRequest<TodoItem>

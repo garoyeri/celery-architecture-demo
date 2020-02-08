@@ -1,11 +1,11 @@
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
-using CeleryArchitectureDemo.Infrastructure;
-using MediatR;
-
 namespace CeleryArchitectureDemo.Features.Todo
 {
+    using System.Linq;
+    using System.Threading;
+    using System.Threading.Tasks;
+    using Infrastructure;
+    using MediatR;
+
     public static class ClearCompletedItems
     {
         public class Command : IRequest

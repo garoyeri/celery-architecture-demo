@@ -1,17 +1,16 @@
-using AutoMapper;
-using CeleryArchitectureDemo.Infrastructure;
-using MediatR;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-
 namespace CeleryArchitectureDemo
 {
+    using AutoMapper;
+    using Infrastructure;
+    using MediatR;
+    using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
+    using Microsoft.EntityFrameworkCore;
+    using Microsoft.Extensions.Configuration;
+    using Microsoft.Extensions.DependencyInjection;
+    using Microsoft.Extensions.Hosting;
+
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -29,18 +28,12 @@ namespace CeleryArchitectureDemo
 
             var connection = "Data Source=todo.sqlite";
             services.AddDbContext<TodoContext>
-                    (options => options.UseSqlite(connection));
+                (options => options.UseSqlite(connection));
 
-            services.AddMvc(options =>
-            {
-                options.Filters.Add<TodoContextTransactionFilter>();
-            });
+            services.AddMvc(options => { options.Filters.Add<TodoContextTransactionFilter>(); });
 
             // In production, the React files will be served from this directory
-            services.AddSpaStaticFiles(configuration =>
-            {
-                configuration.RootPath = "ClientApp/build";
-            });
+            services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/build"; });
 
             services.AddOpenApiDocument();
         }
