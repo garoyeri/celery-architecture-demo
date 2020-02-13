@@ -3,11 +3,9 @@ namespace CeleryArchitectureDemo.Features.Todo
     using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
-    using AutoMapper;
-    using AutoMapper.QueryableExtensions;
-    using Infrastructure;
+    using Amazon.DynamoDBv2;
+    using Amazon.DynamoDBv2.DataModel;
     using MediatR;
-    using Microsoft.EntityFrameworkCore;
 
     public static class GetItems
     {
@@ -17,23 +15,23 @@ namespace CeleryArchitectureDemo.Features.Todo
 
         public class Handler : IRequestHandler<Query, TodoItemList>
         {
-            private readonly TodoContext _context;
-            private readonly IMapper _mapper;
+            private readonly IAmazonDynamoDB _client;
 
-            public Handler(TodoContext context, IMapper mapper)
+            public Handler(IAmazonDynamoDB client)
             {
-                _context = context;
-                _mapper = mapper;
+                _client = client;
             }
 
             public async Task<TodoItemList> Handle(Query request, CancellationToken cancellationToken)
             {
-                var results = await _context.TodoItems
-                    .OrderBy(i => i.WhenCompleted)
-                    .ProjectTo<TodoItem>(_mapper.ConfigurationProvider)
-                    .ToListAsync(cancellationToken);
+                var context = new DynamoDBContext(_client);
 
-                return new TodoItemList {TodoItems = results};
+                var itemsFound = context.ScanAsync<TodoItem>(Enumerable.Empty<ScanCondition>());
+                var nextItemSet = await itemsFound.GetNextSetAsync(cancellationToken);
+                return new TodoItemList
+                {
+                    TodoItems = nextItemSet
+                };
             }
         }
     }

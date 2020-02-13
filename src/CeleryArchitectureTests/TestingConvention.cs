@@ -1,29 +1,34 @@
 ﻿namespace CeleryArchitectureTests
 {
     using System;
-    using CeleryArchitectureDemo.Infrastructure;
     using Fixie;
-    using static Testing;
 
-    public class TestingConvention : Execution, IDisposable
+    public class TestingConvention : Discovery, Execution, IDisposable
     {
         public TestingConvention()
         {
-            Migrate<TodoContext>();
+            Methods.Where(x => x.Name != "SetUp");
         }
 
         public void Execute(TestClass testClass)
         {
-            var instance = testClass.Construct();
+            testClass.RunCases(@case =>
+            {
+                var instance = testClass.Construct();
 
-            testClass.RunCases(@case => { @case.Execute(instance); });
+                SetUp(instance);
 
-            instance.Dispose();
+                @case.Execute(instance);
+            });
         }
 
         public void Dispose()
         {
-            DeleteDatabase<TodoContext>();
+        }
+
+        static void SetUp(object instance)
+        {
+            instance.GetType().GetMethod("SetUp")?.Execute(instance);
         }
     }
 }

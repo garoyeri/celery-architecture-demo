@@ -1,12 +1,14 @@
 namespace CeleryArchitectureDemo.Features.Todo
 {
     using System;
+    using Amazon.DynamoDBv2.DataModel;
 
     public class TodoItem
     {
-        public int Id { get; set; }
+        [DynamoDBHashKey]
+        public Guid Id { get; set; }
         public string Description { get; set; }
-        public DateTimeOffset? WhenCompleted { get; set; }
+        public DateTime? WhenCompleted { get; set; }
         public bool IsCompleted { get; set; }
     }
 }

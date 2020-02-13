@@ -1,9 +1,10 @@
 namespace CeleryArchitectureDemo.Features.Todo
 {
+    using System;
     using System.Threading;
     using System.Threading.Tasks;
-    using AutoMapper;
-    using Infrastructure;
+    using Amazon.DynamoDBv2;
+    using Amazon.DynamoDBv2.DataModel;
     using MediatR;
 
     public static class AddItem
@@ -15,22 +16,26 @@ namespace CeleryArchitectureDemo.Features.Todo
 
         public class Handler : IRequestHandler<Command, TodoItem>
         {
-            private readonly TodoContext _context;
-            private readonly IMapper _mapper;
+            private readonly IAmazonDynamoDB _client;
 
-            public Handler(TodoContext context, IMapper mapper)
+            public Handler(IAmazonDynamoDB client)
             {
-                _context = context;
-                _mapper = mapper;
+                _client = client;
             }
 
             public async Task<TodoItem> Handle(Command request, CancellationToken cancellationToken)
             {
-                var newItem = await _context.TodoItems.AddAsync(
-                    _mapper.Map<Domain.TodoItem>(request), cancellationToken);
-                await _context.SaveChangesAsync(cancellationToken);
+                var context = new DynamoDBContext(_client);
 
-                return _mapper.Map<TodoItem>(newItem.Entity);
+                var newItem = new TodoItem()
+                {
+                    Id = Guid.NewGuid(),
+                    Description = request.Description
+                };
+
+                await context.SaveAsync(newItem, cancellationToken);
+
+                return newItem;
             }
         }
     }

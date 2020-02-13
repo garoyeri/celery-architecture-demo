@@ -1,12 +1,13 @@
 namespace CeleryArchitectureDemo
 {
+    using Amazon;
+    using Amazon.DynamoDBv2;
     using AutoMapper;
-    using Infrastructure;
+    using Features.Todo;
     using MediatR;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
-    using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
@@ -26,16 +27,18 @@ namespace CeleryArchitectureDemo
             services.AddMediatR(typeof(Startup).Assembly);
             services.AddAutoMapper(typeof(Startup).Assembly);
 
-            var connection = "Data Source=todo.sqlite";
-            services.AddDbContext<TodoContext>
-                (options => options.UseSqlite(connection));
-
-            services.AddMvc(options => { options.Filters.Add<TodoContextTransactionFilter>(); });
+            services.AddMvc();
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration => { configuration.RootPath = "ClientApp/build"; });
 
-            services.AddOpenApiDocument();
+            services.AddOpenApiDocument(options => { });
+
+            services.AddDefaultAWSOptions(Configuration.GetAWSOptions());
+            var tableName = Configuration.GetSection("Todo").GetValue<string>("TableName");
+            AWSConfigsDynamoDB.Context.TypeMappings[typeof(TodoItem)] = new Amazon.Util.TypeMapping(typeof(TodoItem), tableName);
+
+            services.AddAWSService<IAmazonDynamoDB>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

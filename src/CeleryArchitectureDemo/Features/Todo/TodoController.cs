@@ -1,5 +1,6 @@
 namespace CeleryArchitectureDemo.Features.Todo
 {
+    using System;
     using System.Threading.Tasks;
     using MediatR;
     using Microsoft.AspNetCore.Mvc;
@@ -32,7 +33,7 @@ namespace CeleryArchitectureDemo.Features.Todo
         }
 
         [HttpPost("{id}")]
-        public async Task<ActionResult<TodoItem>> Edit([FromRoute] int id, [FromBody] EditItem.Command command)
+        public async Task<ActionResult<TodoItem>> Edit([FromRoute] Guid id, [FromBody] EditItem.Command command)
         {
             command.Id = id;
             var result = await _mediator.Send(command);
@@ -41,7 +42,7 @@ namespace CeleryArchitectureDemo.Features.Todo
         }
 
         [HttpPost("{id}/complete")]
-        public async Task<ActionResult<TodoItem>> Complete([FromRoute] int id)
+        public async Task<ActionResult<TodoItem>> Complete([FromRoute] Guid id)
         {
             var command = new CompleteItem.Command {Id = id};
             var result = await _mediator.Send(command);

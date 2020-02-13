@@ -3,12 +3,14 @@
 namespace CeleryArchitectureTests
 {
     using System;
+    using System.Collections.Generic;
     using System.Threading.Tasks;
+    using Amazon.DynamoDBv2;
+    using Amazon.DynamoDBv2.DataModel;
+    using Amazon.DynamoDBv2.Model;
     using AutoMapper;
     using CeleryArchitectureDemo;
-    using CeleryArchitectureDemo.Infrastructure;
     using MediatR;
-    using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
 
@@ -30,33 +32,22 @@ namespace CeleryArchitectureTests
 
             startup.ConfigureServices(services);
 
-            // provided in MVC, but not generally available
-            services.AddScoped<TodoContextTransactionFilter>();
-
             // TODO: override any classes that need to be replaced with fakes
 
             var rootContainer = services.BuildServiceProvider();
             ScopeFactory = rootContainer.GetService<IServiceScopeFactory>();
         }
 
-        public static DbSet<T> Query<T, TContext>()
-            where T : class
-            where TContext : DbContext
-        {
-            var scope = ScopeFactory.CreateScope();
-
-            var dbContext = scope.ServiceProvider.GetService<TContext>();
-
-            return dbContext.Set<T>();
-        }
-
-        public static async Task UsingContextAsync<TContext>(Func<TContext, Task> actions)
-            where TContext : DbContext
+        public static IAmazonDynamoDB Query()
         {
             using var scope = ScopeFactory.CreateScope();
-            var dbContext = scope.ServiceProvider.GetService<TContext>();
-            await actions(dbContext);
-            await dbContext.SaveChangesAsync();
+            var client = scope.ServiceProvider.GetService<IAmazonDynamoDB>();
+            return client;
+        }
+
+        public static IDynamoDBContext QueryContext()
+        {
+            return new DynamoDBContext(Query());
         }
 
         public static T Map<T>(object source)
@@ -89,15 +80,9 @@ namespace CeleryArchitectureTests
             {
                 var serviceProvider = scope.ServiceProvider;
 
-                var unitOfWork = serviceProvider.GetService<TodoContextTransactionFilter>();
-                await unitOfWork.OnActionExecutionAsync(null, async () =>
-                {
-                    beforeSend?.Invoke(serviceProvider);
+                beforeSend?.Invoke(serviceProvider);
 
-                    response = await serviceProvider.GetService<IMediator>().Send(message);
-
-                    return null;
-                });
+                response = await serviceProvider.GetService<IMediator>().Send(message);
 
                 afterSuccessfulSend?.Invoke(serviceProvider);
             }
@@ -105,28 +90,65 @@ namespace CeleryArchitectureTests
             return response;
         }
 
-        public static Task Migrate<TContext>()
-            where TContext : DbContext
-        {
-            return UsingContextAsync<TContext>(context => context.Database.MigrateAsync());
-        }
-
-        public static Task DeleteDatabase<TContext>()
-            where TContext : DbContext
+        public static async Task CreateTable()
         {
             using var scope = ScopeFactory.CreateScope();
-            var database = scope.ServiceProvider.GetService<TContext>().Database;
-            return database.EnsureDeletedAsync();
+            var tableName = Configuration.GetValue<string>("Todo:TableName");
+            var client = scope.ServiceProvider.GetService<IAmazonDynamoDB>();
+            await client.CreateTableAsync(tableName, new List<KeySchemaElement>
+            {
+                new KeySchemaElement("Id", KeyType.HASH)
+            }, new List<AttributeDefinition>
+            {
+                new AttributeDefinition("Id", ScalarAttributeType.S)
+            }, new ProvisionedThroughput(3, 1));
+
+            DescribeTableResponse tableStatus = null;
+            var tries = 3;
+            do
+            {
+                try
+                {
+                    tableStatus = await client.DescribeTableAsync(tableName);
+                    tries--;
+                }
+                catch (ResourceNotFoundException)
+                {
+                    await Task.Delay(TimeSpan.FromSeconds(2));
+                }
+
+            } while (tableStatus != null && tableStatus.Table.TableStatus != TableStatus.ACTIVE && tries >= 0);
         }
 
-        // TodoContext shortcuts
-        public static Task UsingContextAsync(Func<TodoContext, Task> actions) =>
-            UsingContextAsync<TodoContext>(actions);
-
-        public static DbSet<T> Query<T>()
-            where T : class
+        public static async Task DeleteTable()
         {
-            return Query<T, TodoContext>();
+            using var scope = ScopeFactory.CreateScope();
+            var tableName = Configuration.GetValue<string>("Todo:TableName");
+            var client = scope.ServiceProvider.GetService<IAmazonDynamoDB>();
+            try
+            {
+                await client.DeleteTableAsync(tableName);
+
+                var tries = 3;
+                var done = false;
+
+                do
+                {
+                    try
+                    {
+                        await client.DescribeTableAsync(tableName);
+                        await Task.Delay(TimeSpan.FromSeconds(2));
+                        tries--;
+                    }
+                    catch (ResourceNotFoundException)
+                    {
+                        done = true;
+                    }
+                } while (!done && tries >= 0);
+            }
+            catch (ResourceNotFoundException)
+            {
+            }
         }
     }
 }

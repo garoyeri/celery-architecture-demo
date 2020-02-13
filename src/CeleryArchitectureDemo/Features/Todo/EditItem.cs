@@ -1,41 +1,38 @@
 namespace CeleryArchitectureDemo.Features.Todo
 {
+    using System;
     using System.Threading;
     using System.Threading.Tasks;
-    using AutoMapper;
-    using Infrastructure;
+    using Amazon.DynamoDBv2;
+    using Amazon.DynamoDBv2.DataModel;
     using MediatR;
 
     public static class EditItem
     {
         public class Command : IRequest<TodoItem>
         {
-            public int Id { get; set; }
+            public Guid Id { get; set; }
             public string Description { get; set; }
         }
 
         public class Handler : IRequestHandler<Command, TodoItem>
         {
-            private readonly TodoContext _context;
-            private readonly IMapper _mapper;
+            private readonly IAmazonDynamoDB _client;
 
-            public Handler(TodoContext context, IMapper mapper)
+            public Handler(IAmazonDynamoDB client)
             {
-                _context = context;
-                _mapper = mapper;
+                _client = client;
             }
 
             public async Task<TodoItem> Handle(Command request, CancellationToken cancellationToken)
             {
-                var item = await _context.TodoItems.FindAsync(new object[] {request.Id}, cancellationToken);
-                if (item == null)
-                    throw new TodoItemNotFoundException();
+                var context = new DynamoDBContext(_client);
 
-                item.Description = request.Description;
+                var itemFound = await context.LoadAsync<TodoItem>(request.Id, cancellationToken);
+                itemFound.Description = request.Description;
+                await context.SaveAsync(itemFound, cancellationToken);
 
-                await _context.SaveChangesAsync(cancellationToken);
-
-                return _mapper.Map<TodoItem>(item);
+                return itemFound;
             }
         }
     }
